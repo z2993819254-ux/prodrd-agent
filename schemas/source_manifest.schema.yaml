@@ -1,0 +1,48 @@
+# source_manifest.yaml Schema
+
+type: object
+required: [sources, collected_at]
+properties:
+  sources:
+    type: array
+    items:
+      type: object
+      required: [url_or_ref, tier, collected_at, target_layers]
+      properties:
+        url_or_ref:
+          type: string
+          description: "来源 URL 或引用说明"
+        tier:
+          type: integer
+          enum: [1, 2, 3, 4]
+          description: "语料等级（1=第一手, 2=高可信二手, 3=一般参考, 4=用户提供）"
+        title:
+          type: string
+          description: "来源标题"
+        collected_at:
+          type: string
+          format: date-time
+        target_layers:
+          type: array
+          items:
+            type: string
+            enum: [identity, worldview, expression, cognition, emotion, social]
+        content_summary:
+          type: string
+          description: "内容摘要（100 字内）"
+
+  collected_at:
+    type: string
+    format: date-time
+    description: "采集时间"
+
+  total_sources:
+    type: integer
+
+  tier_distribution:
+    type: object
+    properties:
+      tier_1: { type: integer }
+      tier_2: { type: integer }
+      tier_3: { type: integer }
+      tier_4: { type: integer }

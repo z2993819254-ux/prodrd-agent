@@ -1,0 +1,17 @@
+id: "sherlock-holmes"
+name: "Sherlock Holmes"
+type: FICTIONAL
+subtype: literary
+era: "fictional:1881-1914"
+language_primary: en
+source_richness: abundant
+worldview_id: "conan-doyle-universe"
+confidence_level: 0.92
+maturity:
+  stage: mature
+  slot_count: 58
+  correction_count: 0
+  reinforcement_count: 0
+created_at: "2026-04-06T00:00:00Z"
+updated_at: "2026-04-06T00:00:00Z"
+version: "v1.0.0"

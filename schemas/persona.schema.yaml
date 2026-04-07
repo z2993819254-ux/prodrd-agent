@@ -1,0 +1,81 @@
+# persona.yaml Schema — 记忆槽位存储结构
+
+type: object
+required: [slots]
+
+properties:
+  slots:
+    type: object
+    description: "记忆槽位映射，key 为 slot_key，最多 128 个"
+    maxProperties: 128
+    additionalProperties:
+      type: object
+      required: [content, confidence, source, reinforced_count, last_activated, is_core]
+      properties:
+        content:
+          type: string
+          description: "槽位内容，具体可执行的描述"
+
+        confidence:
+          type: number
+          minimum: 0.0
+          maximum: 1.0
+          description: |
+            置信度：
+            0.9-1.0: 多个 Tier 1 来源互证
+            0.7-0.9: 单一 Tier 1 或多个 Tier 2
+            0.5-0.7: Tier 2-3，有一定证据
+            0.3-0.5: 单一 Tier 3 或需推断
+            <0.3: 高度推测
+
+        source:
+          type: string
+          description: "数据来源标注（含 Tier 等级）"
+
+        reinforced_count:
+          type: integer
+          minimum: 0
+          description: "被用户行为确认/强化的次数"
+
+        last_activated:
+          type: string
+          format: date-time
+          nullable: true
+          description: "最近一次被 memory_selector 调用的时间"
+
+        is_core:
+          type: boolean
+          description: "是否为核心记忆（始终注入对话上下文）"
+
+        canonical:
+          type: boolean
+          default: true
+          description: "是否来自正典来源（仅 FICTIONAL 类型使用）"
+
+        stale:
+          type: boolean
+          default: false
+          description: "是否已过期（长时间未激活 + 低置信度）"
+
+        candidate_for_removal:
+          type: boolean
+          default: false
+          description: "是否为候选删除项"
+
+# slot_key 命名规范
+# 格式: <category>.<subcategory>[.<detail>]
+# category 枚举: identity, worldview, expression, cognition, emotion, social
+# 示例:
+#   identity.birthplace
+#   worldview.core_belief.tech_optimism
+#   worldview.position.ai_regulation
+#   expression.catchphrase
+#   expression.medium.twitter
+#   expression.formality
+#   cognition.reasoning_style
+#   cognition.expertise.rocketry
+#   cognition.knowledge_boundary.knows
+#   emotion.baseline_tone
+#   emotion.trigger.被质疑
+#   social.with_authority
+#   social.conflict_style
