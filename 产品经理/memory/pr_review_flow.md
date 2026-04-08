@@ -1,6 +1,6 @@
 ---
 name: PR Review 流程
-description: 完整的 review 流程：首次、返工验证、架构对齐
+description: 完整的 review 流程：首次、返工验证、架构对齐、防遗漏检查
 type: feedback
 ---
 
@@ -30,6 +30,25 @@ type: feedback
 - 方向冲突 → 关闭 + 写明原因和替代方案
 - 需要调整 → 写 comment 要求返工
 - 被取代 → 关闭 + 标注被哪个 PR/Issue 取代
+
+## ⚠️ 防遗漏检查（每次 review 时必须执行）
+
+**不能只看 comment 数为 0 的 PR！** 必须同时检查所有 open PR 的最新 commit 时间是否晚于最新 review comment 时间：
+
+```bash
+# 检查每个 open PR 的最新 commit vs 最新 review
+for pr in $(gh pr list --repo {owner/repo} --json number --jq '.[].number'); do
+  echo "PR #$pr:"
+  gh pr view $pr --json commits --jq '.commits[-1] | {date: .committedDate, msg: .messageHeadline}'
+  gh pr view $pr --json comments --jq '.comments[-1] | {date: .createdAt, body: .body[0:60]}'
+done
+```
+
+以下情况容易遗漏：
+- 开发修完 push 了但只在 Issue 留言，PR 上没新 comment → 以为没返工
+- PR 做了 rebase（新 commit）但内容没变 → 需要确认 rebase 没破坏修复
+- 上次 review 是 LGTM 但之后 PR 又有新 commit → 需要确认新改动没问题
+- 开发提了新 PR 替代旧 PR → 旧 PR 应该关闭
 
 ## 强制规则
 
