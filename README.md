@@ -145,24 +145,34 @@ PM 给出 LGTM 后，测试工程师 Agent 介入：
 ```
 prodrd-agent/
 ├── 产品经理/
+│   ├── agent.md         # Claude Code Agent 定义（frontmatter + 系统提示）
 │   ├── memory/          # 角色定义、Issue 规范、Review 流程、轮询规则
 │   └── skills/
 │       └── create-issue/   # 标准化 Issue 创建技能
 ├── 开发工程师/
+│   ├── agent.md         # Claude Code Agent 定义（建议 model: opus）
 │   ├── memory/          # 角色定义、开发流程、Git 规范、PR 规范、返工规范
 │   └── skills/
 │       ├── poll-and-work/  # 轮询领任务+自动开发
 │       └── submit-pr/      # 标准化 PR 提交技能
 ├── 测试工程师/
+│   ├── agent.md         # Claude Code Agent 定义
 │   ├── memory/          # 角色定义、测试流程、报告模板、回归检查
 │   └── skills/
 │       └── verify-pr/     # PR 验证技能
-└── 协作流程/
-    └── README.md        # 流程总览文档
+├── 协作流程/
+│   └── README.md        # 流程总览文档
+└── LESSONS-LEARNED.md   # 推行经验：模型选型、Team 模式、串行门禁、通信分层等
 ```
 
 ## 使用方式
 
-每个角色目录是一个独立的 Claude Code Agent 配置。将对应目录下的 `memory/` 和 `skills/` 放到该 Agent 的 Claude Code 项目配置中即可。
+每个角色目录是一个独立的 Claude Code Agent 配置：
 
-三个 Agent 通过 GitHub Issue 和 PR 的评论区异步协作，不需要直接通信。
+1. 把 `<角色>/agent.md` 放到 `~/.claude/agents/<name>.md`（用户级）或项目 `.claude/agents/<name>.md`（项目级）——这是该 Agent 的入口定义。
+2. 把 `<角色>/memory/` 和 `<角色>/skills/` 放到该 Agent 对应的 Claude Code 项目配置中。
+3. 三个 Agent 通过 GitHub Issue / PR 评论区沉淀正式结论；实时拉齐走 Claude Code Team 内部消息（详见 [LESSONS-LEARNED.md](./LESSONS-LEARNED.md)）。
+
+## 推行经验
+
+首次在项目里落地这套流程前建议先读 [LESSONS-LEARNED.md](./LESSONS-LEARNED.md)，里面记录了模型选型（Dev 用 Opus）、Team 模式边界、Skill 显式调用、串行门禁等踩坑后总结的规则。
